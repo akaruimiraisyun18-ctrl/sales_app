@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,redirect
 import sqlite3
 import matplotlib.pyplot as plt 
 import os
@@ -22,8 +22,10 @@ init_db()
 @app.route("/")
 def index():
     return render_template("index.html", weekdays=weekdays)
-@app.route("/input", methods=["POST"])
+@app.route("/input", methods=["GET","POST"])
 def input_sales():
+    if request.method == "GET":
+        return redirect("/")
     start_hour = int(request.form["start_hour"])
     end_hour = int(request.form["end_hour"])
     days = int(request.form["days"])
