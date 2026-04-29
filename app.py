@@ -116,4 +116,6 @@ def result():
         heatmap_image="heatmap.png",
         bar_image="bar.png"
     )    
-app.run(debug=True)
+if __name__ == "__main__":
+    port=int(os.environ.get("PORT",5000))
+    app.run(host="0.0.0.0",port=port)
