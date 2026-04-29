@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>分析結果</title>
+</head>
+<body>
+<h1>分析結果</h1>
+<h2>曜日・時間帯別　平均売上表</h2>
+<table border="1">
+    <tr>
+        <th>曜日</th>
+
+        {% for kenako in hours %}
+             <th>{{kenako}}時</th>
+        {% endfor %} 
+    </tr>
+    {% for kinako in range(7) %}
+        <tr>
+            <td>{{weekdays[kinako]}}</td>
+            {% for kenako in range(hours|length) %}
+                <td>{{average_table[kinako][kenako]}}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}    
+</table>
+<br><br>
+<h2>ヒートマップ</h2>
+<img src="{{url_for('static',filename=heatmap_image)}}" width="700">
+
+<br><br>
+<h2>曜日別　合計売上　棒グラフ</h2>
+<img src="{{url_for('static',filename=bar_image)}}" width="700">
+
+<br><br>
+
+<a href="/">最初に戻る</a>
+</body>
+</html>

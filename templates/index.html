@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>売上分析アプリ</title>
+</head>
+<body>
+<h1>初期設定</h1>
+<form action="/input" method="post">
+    <p>開店時間</p>
+    <input type="number" name="start_hour" required>
+    <p>閉店時間</p>
+    <input type="number" name="end_hour" required>
+    <p>今月の日数</p>
+    <input type="number" name="days" required>
+    <p>初日の曜日(0=月,1=火,2=水,3=木,4=金,5=土,6=日)</p>
+    <input type="number" name="start_day" required>
+    <br><br>
+    <input type="submit" value="次へ">
+</form>
+</body>
+</html>

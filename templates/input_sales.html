@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset = "UTF-8">
+    <title>売上入力</title>
+</head>
+<body>
+<h1>売上入力</h1>
+<form action="/result" method="post">
+    <input type="hidden" name="start_hour" value="{{start_hour}}">
+    <input type="hidden" name="end_hour" value="{{end_hour}}">
+    <input type="hidden" name="days_count" value="{{days|length}}">
+    <input type="hidden" name="start_day" value="{{start_day}}">
+    {%for kinako in days%}
+        <h3>{{kinako+1}}日目</h3>
+        {%for kenako in hours%}
+            <p>{{kenako}}時の売上</p>
+            <input type="number" name="sale_{{kinako}}_{{kenako}}" required>
+        {% endfor %}    
+        <br>
+    {% endfor %}    
+    <br><br>
+    <input type="submit" value="計算する">
+</form>
+</body>
+</html>
