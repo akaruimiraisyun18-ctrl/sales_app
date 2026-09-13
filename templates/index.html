@@ -1,0 +1,2303 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0d1723"
+    >
+
+    <title>
+        Travel Life
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <style>
+
+        /*
+            元のUI設定を維持しながら
+            ナビゲーションのみ7画面化
+        */
+
+        .bottom-nav {
+            grid-template-columns:
+                repeat(
+                    7,
+                    minmax(
+                        0,
+                        1fr
+                    )
+                );
+        }
+
+        #route-screen [hidden],
+        #route-result[hidden],
+        #land-panel[hidden] {
+            display:
+                none;
+        }
+
+        .route-form {
+            display:
+                grid;
+
+            gap:
+                18px;
+        }
+
+        .route-form label {
+            display:
+                block;
+
+            color:
+                var(--muted);
+
+            margin-bottom:
+                8px;
+        }
+
+        .route-form input,
+        .route-form select {
+            width:
+                100%;
+
+            min-width:
+                0;
+
+            padding:
+                14px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                14px;
+
+            background:
+                var(--card);
+
+            color:
+                var(--text);
+
+            font:
+                inherit;
+        }
+
+        .route-button {
+            display:
+                block;
+
+            width:
+                100%;
+
+            padding:
+                14px;
+
+            margin-top:
+                10px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius:
+                14px;
+
+            background:
+                var(--blue-bg);
+
+            color:
+                var(--text);
+
+            font:
+                inherit;
+
+            text-align:
+                center;
+
+            text-decoration:
+                none;
+        }
+
+        .route-button:disabled {
+            opacity:
+                .5;
+
+            cursor:
+                not-allowed;
+        }
+
+        .route-summary {
+            display:
+                grid;
+
+            gap:
+                12px;
+        }
+
+        .route-summary > div {
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            gap:
+                16px;
+        }
+
+        .route-summary dt {
+            color:
+                var(--muted);
+        }
+
+        .route-summary dd {
+            margin:
+                0;
+
+            text-align:
+                right;
+        }
+
+        #route-screen :focus-visible {
+            outline:
+                2px solid var(--blue);
+
+            outline-offset:
+                3px;
+        }
+
+        #game-player-name-input {
+            width:
+                100%;
+
+            box-sizing:
+                border-box;
+        }
+
+        #conquest-legend {
+            display:
+                flex;
+
+            flex-wrap:
+                wrap;
+
+            gap:
+                8px;
+
+            margin:
+                12px 0;
+        }
+
+        .legend-item {
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                6px;
+
+            color:
+                var(--muted);
+
+            font-size:
+                12px;
+        }
+
+        .legend-swatch {
+            width:
+                11px;
+
+            height:
+                11px;
+
+            border-radius:
+                50%;
+
+            display:
+                inline-block;
+        }
+
+        #land-ranking .news-item,
+        #game-notifications .news-item,
+        #buyout-list .news-item {
+            margin-bottom:
+                10px;
+        }
+
+        .game-row {
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            gap:
+                14px;
+
+            align-items:
+                center;
+        }
+
+        .game-row strong {
+            text-align:
+                right;
+        }
+
+        .game-small {
+            color:
+                var(--muted);
+
+            font-size:
+                12px;
+
+            margin-top:
+                5px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<noscript>
+    このアプリを利用するには
+    JavaScriptを有効にしてください。
+</noscript>
+
+<div class="app">
+
+
+<!-- ====================================================== -->
+<!-- 1. 為替 -->
+<!-- ====================================================== -->
+
+<section
+    id="currency-screen"
+    class="screen active"
+>
+
+    <h1 class="page-title">
+        為替チャート
+    </h1>
+
+    <div class="country-search-box">
+
+        <label>
+            国を検索
+
+            <input
+                class="country-search"
+                type="search"
+                placeholder="国名を入力（日本・Japan など）"
+                autocomplete="off"
+            >
+        </label>
+
+        <div
+            class="country-results search-results"
+            aria-live="polite"
+            hidden
+        ></div>
+
+    </div>
+
+    <div
+        id="country-scroll"
+        class="country-scroll"
+    ></div>
+
+    <div class="rate-section">
+
+        <div
+            id="rate-label"
+            class="rate-label"
+        >
+            1ニュージーランドドル は
+        </div>
+
+        <div class="rate-main">
+
+            <span id="rate-number">
+                --
+            </span>
+
+            <span class="yen">
+                円
+            </span>
+
+        </div>
+
+        <div
+            id="rate-date"
+            class="rate-date"
+        >
+            --
+        </div>
+
+    </div>
+
+    <p class="source-note">
+
+        為替：
+
+        <a
+            href="https://frankfurter.dev/"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            Frankfurter
+        </a>
+
+        （日次更新）
+
+    </p>
+
+    <div class="period-row">
+
+        <button data-period="1d">
+            1日
+        </button>
+
+        <button data-period="5d">
+            5日
+        </button>
+
+        <button
+            data-period="1m"
+            class="active"
+        >
+            1か月
+        </button>
+
+        <button data-period="1y">
+            1年
+        </button>
+
+        <button data-period="5y">
+            5年
+        </button>
+
+        <button data-period="max">
+            最大
+        </button>
+
+    </div>
+
+    <div class="chart-header">
+
+        <span id="chart-date">
+            --
+        </span>
+
+        <strong id="chart-value">
+            --
+        </strong>
+
+    </div>
+
+    <div class="chart-wrap">
+
+        <canvas
+            id="currency-chart"
+        ></canvas>
+
+    </div>
+
+    <div class="converter">
+
+        <div class="converter-label">
+            金額を換算
+        </div>
+
+        <div class="converter-input-row">
+
+            <input
+                id="converter-input"
+                type="number"
+                value="5"
+                inputmode="decimal"
+            >
+
+            <span id="converter-currency">
+                NZD
+            </span>
+
+        </div>
+
+        <div class="converter-arrow">
+            ↓
+        </div>
+
+        <div class="converter-answer">
+
+            <strong id="converter-result">
+                --
+            </strong>
+
+            <span>
+                円
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ====================================================== -->
+<!-- 2. ニュース -->
+<!-- ====================================================== -->
+
+<section
+    id="news-screen"
+    class="screen"
+>
+
+    <h1 class="page-title">
+        ニュース
+    </h1>
+
+    <div class="country-search-box">
+
+        <label>
+            国を検索
+
+            <input
+                class="country-search"
+                type="search"
+                placeholder="国名を入力（日本・Japan など）"
+                autocomplete="off"
+            >
+        </label>
+
+        <div
+            class="country-results search-results"
+            aria-live="polite"
+            hidden
+        ></div>
+
+    </div>
+
+    <div class="screen-country">
+
+        <span id="news-flag">
+            🇳🇿
+        </span>
+
+        <div>
+
+            <div
+                id="news-country"
+                class="screen-country-name"
+            >
+                ニュージーランド
+            </div>
+
+            <div class="screen-country-sub">
+                Latest news in English
+            </div>
+
+        </div>
+
+    </div>
+
+    <p class="source-note">
+
+        ニュース検索：
+
+        <a
+            href="https://www.gdeltproject.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            GDELT Project
+        </a>
+
+        · 記事は配信元で開きます。
+
+    </p>
+
+    <p
+        id="news-status"
+        class="data-status"
+        role="status"
+    ></p>
+
+    <div
+        id="news-list"
+        class="news-list"
+    >
+
+        <div class="loading">
+            Loading...
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ====================================================== -->
+<!-- 3. 安全 -->
+<!-- ====================================================== -->
+
+<section
+    id="danger-screen"
+    class="screen"
+>
+
+    <h1 class="page-title">
+        安全
+    </h1>
+
+    <div class="country-search-box">
+
+        <label>
+            国を検索
+
+            <input
+                class="country-search"
+                type="search"
+                placeholder="国名を入力（日本・Japan など）"
+                autocomplete="off"
+            >
+        </label>
+
+        <div
+            class="country-results search-results"
+            aria-live="polite"
+            hidden
+        ></div>
+
+    </div>
+
+    <div class="screen-country">
+
+        <span id="danger-flag">
+            🇳🇿
+        </span>
+
+        <div>
+
+            <div
+                id="danger-country"
+                class="screen-country-name"
+            >
+                ニュージーランド
+            </div>
+
+            <div class="screen-country-sub">
+                Disaster & emergency map
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="map-card">
+
+        <div class="map-title-row">
+
+            <span>
+                災害・緊急情報
+            </span>
+
+            <span class="live-badge">
+                LIVE
+            </span>
+
+        </div>
+
+        <div id="danger-map"></div>
+
+        <div class="danger-scale">
+
+            <span>
+                LOW
+            </span>
+
+            <div class="danger-gradient"></div>
+
+            <span>
+                HIGH
+            </span>
+
+        </div>
+
+    </div>
+
+    <p class="source-note">
+
+        <a
+            href="https://www.gdacs.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            GDACS
+        </a>
+
+        の災害・緊急事象データを色分けしています。
+        犯罪率や治安スコアではありません。
+        現地当局の公式情報も確認してください。
+
+    </p>
+
+</section>
+
+
+<!-- ====================================================== -->
+<!-- 4. 経路 -->
+<!-- ====================================================== -->
+
+<section
+    id="route-screen"
+    class="screen"
+>
+
+    <h1 class="page-title">
+        経路
+    </h1>
+
+    <div class="country-search-box">
+
+        <label>
+            国を検索
+
+            <input
+                class="country-search"
+                type="search"
+                placeholder="国名を入力（日本・Japan など）"
+                autocomplete="off"
+            >
+        </label>
+
+        <div
+            class="country-results search-results"
+            aria-live="polite"
+            hidden
+        ></div>
+
+    </div>
+
+    <p class="source-note">
+        出発地と目的地から経路を取得し、
+        移動中の雨を確認します。
+    </p>
+
+    <div
+        id="route-form"
+        class="route-form"
+    >
+
+        <div>
+
+            <label for="route-origin">
+                出発地
+            </label>
+
+            <input
+                id="route-origin"
+                type="search"
+                placeholder="場所・住所を検索"
+                maxlength="200"
+                autocomplete="off"
+            >
+
+            <button
+                id="route-current-location"
+                class="route-button"
+                type="button"
+            >
+                現在地を使う
+            </button>
+
+            <div
+                id="route-origin-results"
+                class="search-results"
+                aria-live="polite"
+                hidden
+            ></div>
+
+        </div>
+
+        <div>
+
+            <label for="route-destination">
+                目的地
+            </label>
+
+            <input
+                id="route-destination"
+                type="search"
+                placeholder="場所・住所を検索"
+                maxlength="200"
+                autocomplete="off"
+            >
+
+            <div
+                id="route-destination-results"
+                class="search-results"
+                aria-live="polite"
+                hidden
+            ></div>
+
+        </div>
+
+        <div>
+
+            <label for="route-mode">
+                移動方法
+            </label>
+
+            <select id="route-mode">
+
+                <option value="walk">
+                    徒歩
+                </option>
+
+                <option value="bicycle">
+                    自転車
+                </option>
+
+                <option value="transit">
+                    電車・公共交通
+                </option>
+
+                <option value="drive">
+                    車
+                </option>
+
+            </select>
+
+        </div>
+
+        <div>
+
+            <label for="route-departure">
+                出発日時
+            </label>
+
+            <input
+                id="route-departure"
+                type="datetime-local"
+                aria-describedby="route-timezone"
+            >
+
+            <p
+                id="route-timezone"
+                class="search-hint"
+            >
+                日時のタイムゾーンは
+                場所の確定後に表示します。
+            </p>
+
+        </div>
+
+        <button
+            id="route-search"
+            class="route-button"
+            type="button"
+        >
+            経路と雨を確認
+        </button>
+
+    </div>
+
+    <p
+        id="route-status"
+        class="data-status"
+        role="status"
+    >
+        出発地と目的地を選択してください。
+    </p>
+
+    <div
+        id="route-result"
+        hidden
+    >
+
+        <div class="section-heading">
+
+            <h2>
+                移動中の雨
+            </h2>
+
+            <span>
+                ROUTE
+            </span>
+
+        </div>
+
+        <div class="advice-box">
+
+            <span
+                id="route-umbrella-icon"
+                class="advice-icon"
+            >
+                ☂️
+            </span>
+
+            <div>
+
+                <strong id="route-umbrella-title">
+                    判定未取得
+                </strong>
+
+                <p id="route-umbrella-text">
+                    --
+                </p>
+
+            </div>
+
+        </div>
+
+        <dl class="route-summary">
+
+            <div>
+                <dt>
+                    距離
+                </dt>
+
+                <dd id="route-distance">
+                    --
+                </dd>
+            </div>
+
+            <div>
+                <dt>
+                    所要時間
+                </dt>
+
+                <dd id="route-duration">
+                    --
+                </dd>
+            </div>
+
+            <div>
+                <dt>
+                    屋外移動時間の目安
+                </dt>
+
+                <dd id="route-outdoor-time">
+                    --
+                </dd>
+            </div>
+
+            <div>
+                <dt>
+                    雨に当たる時間の目安
+                </dt>
+
+                <dd id="route-wet-time">
+                    --
+                </dd>
+            </div>
+
+            <div>
+                <dt>
+                    予想降水量
+                </dt>
+
+                <dd id="route-precipitation">
+                    --
+                </dd>
+            </div>
+
+            <div>
+                <dt>
+                    雨が強まる予報時刻
+                </dt>
+
+                <dd id="route-rain-time">
+                    --
+                </dd>
+            </div>
+
+        </dl>
+
+        <p
+            id="route-data-note"
+            class="source-note"
+        >
+            判定は予報と経路データからの目安です。
+            屋根・地下通路・駐車場所を特定できない場合は、
+            その旨を表示します。
+        </p>
+
+        <p class="source-note">
+            自転車では傘ではなく
+            レインウェアなどの雨対策を案内します。
+        </p>
+
+        <a
+            id="route-google-link"
+            class="route-button"
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+        >
+            Googleマップで経路を開く
+        </a>
+
+        <p class="source-note">
+            Googleマップで表示される経路が、
+            このアプリの判定経路と異なる場合があります。
+        </p>
+
+    </div>
+
+    <p class="source-note">
+        経路検索・位置検索データを利用しています。
+    </p>
+
+</section>
+<!-- ====================================================== -->
+<!-- 5. 生活 -->
+<!-- ====================================================== -->
+
+<section
+    id="life-screen"
+    class="screen"
+>
+
+    <h1 class="page-title">
+        生活
+    </h1>
+
+    <div class="country-search-box">
+
+        <label>
+            国を検索
+
+            <input
+                class="country-search"
+                type="search"
+                placeholder="国名を入力（日本・Japan など）"
+                autocomplete="off"
+            >
+        </label>
+
+        <div
+            class="country-results search-results"
+            aria-live="polite"
+            hidden
+        ></div>
+
+    </div>
+
+    <div class="screen-country">
+
+        <span id="life-flag">
+            🇳🇿
+        </span>
+
+        <div>
+
+            <div
+                id="life-country"
+                class="screen-country-name"
+            >
+                ニュージーランド
+            </div>
+
+            <div
+                id="weather-city"
+                class="screen-country-sub"
+            >
+                Wellington
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="city-search-box">
+
+        <label for="city-search">
+            天気を見たい街を検索
+        </label>
+
+        <input
+            id="city-search"
+            type="search"
+            placeholder="街名を2文字以上入力"
+            autocomplete="off"
+            maxlength="80"
+            aria-describedby="city-hint"
+        >
+
+        <p
+            id="city-hint"
+            class="search-hint"
+        ></p>
+
+        <div
+            id="city-results"
+            class="search-results"
+            aria-live="polite"
+            hidden
+        ></div>
+
+    </div>
+
+    <p
+        id="weather-status"
+        class="data-status"
+        role="status"
+    ></p>
+
+    <p class="source-note">
+
+        <a
+            href="https://open-meteo.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            Weather data by Open-Meteo
+        </a>
+
+    </p>
+
+
+    <!-- 現在 -->
+
+    <div class="current-weather">
+
+        <div>
+
+            <div class="weather-now-label">
+                現在の天気
+            </div>
+
+            <div class="weather-temperature-row">
+
+                <strong id="weather-temperature">
+                    --
+                </strong>
+
+                <span>
+                    °
+                </span>
+
+            </div>
+
+            <div
+                id="weather-description"
+                class="weather-description"
+            >
+                Loading...
+            </div>
+
+        </div>
+
+        <div
+            id="weather-icon"
+            class="weather-main-icon"
+        >
+            ☁️
+        </div>
+
+    </div>
+
+
+    <div class="weather-stats">
+
+        <div>
+
+            <span>
+                体感
+            </span>
+
+            <strong id="weather-feels">
+                --
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+                降水
+            </span>
+
+            <strong id="weather-rain">
+                --
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+                風
+            </span>
+
+            <strong id="weather-wind">
+                --
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- アドバイス -->
+
+    <div class="advice-box">
+
+        <span
+            id="advice-icon"
+            class="advice-icon"
+        >
+            ☂️
+        </span>
+
+        <div>
+
+            <strong id="advice-title">
+                天気を確認中
+            </strong>
+
+            <p id="advice-text">
+                --
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- UV -->
+
+    <div class="large-info">
+
+        <span>
+            UV指数
+        </span>
+
+        <strong id="uv-index">
+            --
+        </strong>
+
+    </div>
+
+    <p
+        id="uv-advice"
+        class="source-note"
+    >
+        UV情報はまだ取得していません。
+    </p>
+
+    <p
+        id="uv-time"
+        class="source-note"
+    ></p>
+
+
+    <!-- 24時間 -->
+
+    <div class="section-heading">
+
+        <h2>
+            今後24時間
+        </h2>
+
+        <span>
+            HOURLY
+        </span>
+
+    </div>
+
+    <div
+        id="hourly-forecast"
+        class="hourly-forecast"
+    ></div>
+
+
+    <!-- 7日 -->
+
+    <div class="section-heading">
+
+        <h2>
+            7日間予報
+        </h2>
+
+        <span>
+            WEEKLY
+        </span>
+
+    </div>
+
+    <div
+        id="weekly-forecast"
+        class="weekly-forecast"
+    ></div>
+
+
+    <!-- Radar -->
+
+    <div class="section-heading">
+
+        <h2>
+            雨雲レーダー
+        </h2>
+
+        <span>
+            RADAR
+        </span>
+
+    </div>
+
+    <div class="radar-card">
+
+        <div id="radar-map"></div>
+
+        <div class="radar-bottom">
+
+            <strong id="radar-time">
+                --
+            </strong>
+
+            <input
+                id="radar-slider"
+                type="range"
+                min="0"
+                max="0"
+                value="0"
+            >
+
+            <button id="radar-play">
+                ▶ 再生
+            </button>
+
+        </div>
+
+        <div class="radar-credit">
+
+            <a
+                href="https://www.rainviewer.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Weather data by RainViewer
+            </a>
+
+            （過去2時間）
+
+        </div>
+
+    </div>
+
+    <p class="source-note">
+
+        天気：
+
+        <a
+            href="https://open-meteo.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            Open-Meteo
+        </a>
+
+    </p>
+
+
+    <!-- 緊急情報 -->
+
+    <div class="section-heading">
+
+        <h2>
+            緊急情報
+        </h2>
+
+    </div>
+
+    <div class="emergency-grid">
+
+        <div class="emergency-item">
+
+            <span>
+                国番号
+            </span>
+
+            <strong id="calling-code">
+                --
+            </strong>
+
+        </div>
+
+        <a
+            id="ambulance-link"
+            class="emergency-item"
+        >
+
+            <span>
+                救急
+            </span>
+
+            <strong id="ambulance">
+                --
+            </strong>
+
+        </a>
+
+        <a
+            id="police-link"
+            class="emergency-item"
+        >
+
+            <span>
+                警察
+            </span>
+
+            <strong id="police">
+                --
+            </strong>
+
+        </a>
+
+        <a
+            id="fire-link"
+            class="emergency-item"
+        >
+
+            <span>
+                消防
+            </span>
+
+            <strong id="fire">
+                --
+            </strong>
+
+        </a>
+
+    </div>
+
+    <div class="large-info">
+
+        <span>
+            チップ
+        </span>
+
+        <strong id="tip-info">
+            --
+        </strong>
+
+    </div>
+
+    <div class="large-info">
+
+        <span>
+            税金
+        </span>
+
+        <strong id="tax-info">
+            --
+        </strong>
+
+    </div>
+
+</section>
+
+
+<!-- ====================================================== -->
+<!-- 6. 移動 -->
+<!-- ====================================================== -->
+
+<section
+    id="history-screen"
+    class="screen"
+>
+
+    <h1 class="page-title">
+        移動
+    </h1>
+
+    <div class="screen-country">
+
+        <span>
+            🚶
+        </span>
+
+        <div>
+
+            <div
+                id="history-player-name"
+                class="screen-country-name"
+            >
+                旅人
+            </div>
+
+            <div class="screen-country-sub">
+                移動してコインを獲得
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="weather-stats">
+
+        <div>
+
+            <span>
+                コイン
+            </span>
+
+            <strong id="history-coins">
+                0
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+                ランク
+            </span>
+
+            <strong id="history-rank">
+                --
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+                移動
+            </span>
+
+            <strong id="trip-mode">
+                --
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="section-heading">
+
+        <h2>
+            現在地
+        </h2>
+
+        <span>
+            GPS
+        </span>
+
+    </div>
+
+    <button
+        id="location-permission"
+        class="route-button"
+        type="button"
+    >
+        📍 位置情報を許可
+    </button>
+
+    <p
+        id="location-status"
+        class="data-status"
+        role="status"
+    >
+        位置情報を確認しています。
+    </p>
+
+
+    <div class="section-heading">
+
+        <h2>
+            移動記録
+        </h2>
+
+        <span>
+            TRIP
+        </span>
+
+    </div>
+
+    <div class="large-info">
+
+        <span>
+            移動距離
+        </span>
+
+        <strong id="trip-distance">
+            0 m
+        </strong>
+
+    </div>
+
+    <div class="large-info">
+
+        <span>
+            獲得コイン
+        </span>
+
+        <strong id="trip-coins">
+            0
+        </strong>
+
+    </div>
+
+    <div class="large-info">
+
+        <span>
+            GPS精度
+        </span>
+
+        <strong id="trip-accuracy">
+            --
+        </strong>
+
+    </div>
+
+    <button
+        id="trip-start"
+        class="route-button"
+        type="button"
+    >
+        ▶ 移動記録を開始
+    </button>
+
+    <button
+        id="trip-stop"
+        class="route-button"
+        type="button"
+    >
+        ■ 移動記録を終了
+    </button>
+
+    <p
+        id="trip-status"
+        class="data-status"
+        role="status"
+    >
+        記録停止中
+    </p>
+
+
+    <div class="section-heading">
+
+        <h2>
+            移動マップ
+        </h2>
+
+        <span>
+            HISTORY
+        </span>
+
+    </div>
+
+    <div class="map-card">
+
+        <div class="map-title-row">
+
+            <span>
+                移動履歴
+            </span>
+
+            <span class="live-badge">
+                GPS
+            </span>
+
+        </div>
+
+        <div
+            id="history-map"
+            style="height: 420px;"
+        ></div>
+
+    </div>
+
+    <button
+        id="history-locate"
+        class="route-button"
+        type="button"
+    >
+        📍 現在地へ移動
+    </button>
+
+    <button
+        id="history-refresh"
+        class="route-button"
+        type="button"
+    >
+        ↻ 履歴を更新
+    </button>
+
+    <p
+        id="history-status"
+        class="data-status"
+        role="status"
+    ></p>
+
+
+    <div class="section-heading">
+
+        <h2>
+            過去の移動
+        </h2>
+
+        <span>
+            LOG
+        </span>
+
+    </div>
+
+    <div
+        id="trip-list"
+        class="news-list"
+    ></div>
+
+    <p
+        id="game-status"
+        class="data-status"
+        role="status"
+    ></p>
+
+</section>
+<!-- ====================================================== -->
+<!-- 7. 征服 -->
+<!-- ====================================================== -->
+
+<section
+    id="conquest-screen"
+    class="screen"
+>
+
+    <h1 class="page-title">
+        征服
+    </h1>
+
+    <div class="screen-country">
+
+        <span>
+            🏴
+        </span>
+
+        <div>
+
+            <div
+                id="conquest-player-name"
+                class="screen-country-name"
+            >
+                ユーザー名未設定
+            </div>
+
+            <div class="screen-country-sub">
+                現実の施設と土地を購入・運用
+            </div>
+
+        </div>
+
+    </div>
+
+    <div
+        id="player-name-card"
+        class="map-card"
+        style="margin-bottom:16px;"
+    >
+
+        <div class="map-title-row">
+
+            <span>
+                プレイヤー名
+            </span>
+
+            <span class="live-badge">
+                PROFILE
+            </span>
+
+        </div>
+
+        <div
+            class="route-form"
+            style="padding-top:12px;"
+        >
+
+            <label>
+                ユーザー名
+
+                <input
+                    id="game-player-name-input"
+                    maxlength="20"
+                    autocomplete="nickname"
+                    placeholder="2〜20文字"
+                >
+            </label>
+
+            <button
+                id="game-player-name-save"
+                class="route-button"
+                type="button"
+            >
+                ユーザー名を保存
+            </button>
+
+            <p
+                id="profile-status"
+                class="data-status"
+                role="status"
+            ></p>
+
+        </div>
+
+    </div>
+
+
+    <div class="weather-stats">
+
+        <div>
+
+            <span>
+                コイン
+            </span>
+
+            <strong id="conquest-coins">
+                0
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+                所有土地
+            </span>
+
+            <strong id="conquest-land-count">
+                0
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+                1日収益
+            </span>
+
+            <strong id="conquest-daily-income">
+                0
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="section-heading">
+
+        <h2>
+            征服マップ
+        </h2>
+
+        <span>
+            MAP
+        </span>
+
+    </div>
+
+    <div class="map-card">
+
+        <div class="map-title-row">
+
+            <span>
+                土地マップ
+            </span>
+
+            <span class="live-badge">
+                LIVE
+            </span>
+
+        </div>
+
+        <div
+            id="conquest-map"
+            style="height:480px;"
+        ></div>
+
+    </div>
+
+    <button
+        id="conquest-locate"
+        class="route-button"
+        type="button"
+    >
+        📍 現在地へ移動
+    </button>
+
+    <button
+        id="conquest-refresh"
+        class="route-button"
+        type="button"
+    >
+        ↻ 土地情報を更新
+    </button>
+
+    <p
+        id="conquest-status"
+        class="data-status"
+        role="status"
+    >
+        地図を拡大して土地をタップしてください。
+    </p>
+
+    <div id="conquest-legend"></div>
+
+
+    <div class="weather-stats">
+
+        <div>
+
+            <span>
+                周辺所有者
+            </span>
+
+            <strong id="local-conquerors">
+                0
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+                プレイヤー
+            </span>
+
+            <strong id="total-conquerors">
+                0
+            </strong>
+
+        </div>
+
+        <div>
+
+            <span>
+                購入済み
+            </span>
+
+            <strong id="total-lands">
+                0
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="land-panel"
+        hidden
+    >
+
+        <div class="section-heading">
+
+            <h2>
+                選択した土地
+            </h2>
+
+            <span>
+                LAND
+            </span>
+
+        </div>
+
+        <div class="large-info">
+
+            <span>
+                土地・施設
+            </span>
+
+            <strong id="land-name">
+                --
+            </strong>
+
+        </div>
+
+        <div class="large-info">
+
+            <span>
+                種類
+            </span>
+
+            <strong id="land-type">
+                --
+            </strong>
+
+        </div>
+
+        <div class="large-info">
+
+            <span>
+                所有者
+            </span>
+
+            <strong id="land-owner">
+                未所有
+            </strong>
+
+        </div>
+
+        <div class="large-info">
+
+            <span>
+                現在価格
+            </span>
+
+            <strong id="land-price">
+                --
+            </strong>
+
+        </div>
+
+        <div class="large-info">
+
+            <span>
+                購入 / 買収申請
+            </span>
+
+            <strong id="land-cost">
+                --
+            </strong>
+
+        </div>
+
+        <div class="large-info">
+
+            <span>
+                最寄り駅まで
+            </span>
+
+            <strong id="land-station-distance">
+                --
+            </strong>
+
+        </div>
+
+        <div class="large-info">
+
+            <span>
+                1日収益
+            </span>
+
+            <strong id="land-income">
+                --
+            </strong>
+
+        </div>
+
+        <div class="large-info">
+
+            <span>
+                状態
+            </span>
+
+            <strong id="land-buyout-state">
+                通常
+            </strong>
+
+        </div>
+
+        <button
+            id="land-buy"
+            class="route-button"
+            type="button"
+        >
+            この土地を購入
+        </button>
+
+        <button
+            id="land-close"
+            class="route-button"
+            type="button"
+        >
+            閉じる
+        </button>
+
+        <p
+            id="land-action-status"
+            class="data-status"
+            role="status"
+        ></p>
+
+    </div>
+
+
+    <div class="section-heading">
+
+        <h2>
+            買収通知
+        </h2>
+
+        <span>
+            24H
+        </span>
+
+    </div>
+
+    <div
+        id="buyout-list"
+        class="news-list"
+    ></div>
+
+    <p
+        id="buyout-status"
+        class="data-status"
+        role="status"
+    ></p>
+
+
+    <div class="section-heading">
+
+        <h2>
+            通知
+        </h2>
+
+        <span>
+            NOTICE
+        </span>
+
+    </div>
+
+    <div
+        id="game-notifications"
+        class="news-list"
+    ></div>
+
+    <button
+        id="notifications-read"
+        class="route-button"
+        type="button"
+    >
+        通知を既読にする
+    </button>
+
+
+    <div class="section-heading">
+
+        <h2>
+            土地保有ランキング
+        </h2>
+
+        <span>
+            RANKING
+        </span>
+
+    </div>
+
+    <div
+        id="land-ranking"
+        class="news-list"
+    ></div>
+
+    <p
+        id="ranking-status"
+        class="data-status"
+        role="status"
+    ></p>
+
+
+    <div class="section-heading">
+
+        <h2>
+            土地カラー
+        </h2>
+
+        <span>
+            COLOR
+        </span>
+
+    </div>
+
+    <div id="rank-shop"></div>
+
+    <p
+        id="rank-shop-status"
+        class="data-status"
+        role="status"
+    ></p>
+
+    <div class="large-info">
+
+        <span>
+            自分の土地カラー
+        </span>
+
+        <strong id="my-land-color">
+            ●
+        </strong>
+
+    </div>
+
+    <div style="display:none">
+
+        <span id="trade-level">
+            1
+        </span>
+
+        <span id="trade-discount">
+            0%
+        </span>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<!-- ====================================================== -->
+<!-- NAV -->
+<!-- ====================================================== -->
+
+<nav class="bottom-nav">
+
+    <button
+        class="nav-button active"
+        data-screen="currency-screen"
+    >
+
+        <span>
+            💱
+        </span>
+
+        為替
+
+    </button>
+
+    <button
+        class="nav-button"
+        data-screen="news-screen"
+    >
+
+        <span>
+            📰
+        </span>
+
+        ニュース
+
+    </button>
+
+    <button
+        class="nav-button"
+        data-screen="danger-screen"
+    >
+
+        <span>
+            🗺️
+        </span>
+
+        安全
+
+    </button>
+
+    <button
+        class="nav-button"
+        data-screen="route-screen"
+    >
+
+        <span>
+            🧭
+        </span>
+
+        経路
+
+    </button>
+
+    <button
+        class="nav-button"
+        data-screen="life-screen"
+    >
+
+        <span>
+            🧳
+        </span>
+
+        生活
+
+    </button>
+
+    <button
+        class="nav-button"
+        data-screen="history-screen"
+    >
+
+        <span>
+            🚶
+        </span>
+
+        移動
+
+    </button>
+
+    <button
+        class="nav-button"
+        data-screen="conquest-screen"
+    >
+
+        <span>
+            🏴
+        </span>
+
+        征服
+
+    </button>
+
+</nav>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js"
+></script>
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+<script
+    src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"
+></script>
+
+<script
+    src="https://unpkg.com/@maplibre/maplibre-gl-leaflet/leaflet-maplibre-gl.js"
+></script>
+
+<script
+    src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"
+></script>
+
+<script
+    src="{{ url_for('static', filename='app.js') }}"
+></script>
+
+</body>
+</html>

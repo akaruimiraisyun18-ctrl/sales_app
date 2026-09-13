@@ -1,0 +1,4068 @@
+/* =========================================================
+   Travel Life
+   style.css
+========================================================= */
+
+
+/* =========================================================
+   0. カラー・共通変数
+========================================================= */
+
+:root {
+
+    --bg:
+        #07111d;
+
+    --bg-soft:
+        #0b1724;
+
+    --card:
+        #0f1d2b;
+
+    --card-2:
+        #132334;
+
+    --card-3:
+        #172a3d;
+
+    --text:
+        #f4f8fc;
+
+    --muted:
+        #8fa1b4;
+
+    --muted-2:
+        #6f8397;
+
+    --border:
+        rgba(
+            255,
+            255,
+            255,
+            0.10
+        );
+
+    --border-strong:
+        rgba(
+            255,
+            255,
+            255,
+            0.18
+        );
+
+    --blue:
+        #5da8ff;
+
+    --blue-2:
+        #3d8ff0;
+
+    --blue-bg:
+        rgba(
+            72,
+            145,
+            230,
+            0.15
+        );
+
+    --green:
+        #69d99d;
+
+    --green-bg:
+        rgba(
+            105,
+            217,
+            157,
+            0.14
+        );
+
+    --red:
+        #ff6477;
+
+    --red-bg:
+        rgba(
+            255,
+            100,
+            119,
+            0.14
+        );
+
+    --orange:
+        #ff9f54;
+
+    --orange-bg:
+        rgba(
+            255,
+            159,
+            84,
+            0.14
+        );
+
+    --purple:
+        #aa7cff;
+
+    --purple-bg:
+        rgba(
+            170,
+            124,
+            255,
+            0.14
+        );
+
+    --yellow:
+        #ffd766;
+
+    --shadow:
+        0
+        16px
+        34px
+        rgba(
+            0,
+            0,
+            0,
+            0.30
+        );
+
+    --radius:
+        18px;
+
+    --radius-small:
+        13px;
+
+    --nav-height:
+        78px;
+
+    --safe-bottom:
+        env(
+            safe-area-inset-bottom,
+            0px
+        );
+}
+
+
+/* =========================================================
+   1. リセット
+========================================================= */
+
+* {
+
+    box-sizing:
+        border-box;
+
+    -webkit-tap-highlight-color:
+        transparent;
+}
+
+html {
+
+    margin:
+        0;
+
+    padding:
+        0;
+
+    min-height:
+        100%;
+
+    background:
+        var(--bg);
+
+    color-scheme:
+        dark;
+
+    scroll-behavior:
+        smooth;
+}
+
+body {
+
+    margin:
+        0;
+
+    padding:
+        0;
+
+    min-width:
+        320px;
+
+    min-height:
+        100vh;
+
+    min-height:
+        100dvh;
+
+    background:
+        var(--bg);
+
+    color:
+        var(--text);
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        "Yu Gothic",
+        Meiryo,
+        sans-serif;
+
+    font-size:
+        15px;
+
+    line-height:
+        1.55;
+
+    -webkit-font-smoothing:
+        antialiased;
+
+    text-rendering:
+        optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+
+    font:
+        inherit;
+}
+
+button {
+
+    color:
+        inherit;
+}
+
+button,
+a {
+
+    touch-action:
+        manipulation;
+}
+
+input,
+select,
+textarea {
+
+    outline:
+        none;
+}
+
+img,
+canvas {
+
+    max-width:
+        100%;
+}
+
+a {
+
+    color:
+        var(--blue);
+}
+
+a:hover {
+
+    opacity:
+        0.92;
+}
+
+[hidden] {
+
+    display:
+        none !important;
+}
+
+noscript {
+
+    display:
+        block;
+
+    margin:
+        16px;
+
+    padding:
+        14px;
+
+    border:
+        1px solid var(--red);
+
+    border-radius:
+        14px;
+
+    background:
+        var(--red-bg);
+
+    color:
+        var(--text);
+}
+
+
+/* =========================================================
+   2. アプリ全体
+========================================================= */
+
+.app {
+
+    width:
+        100%;
+
+    max-width:
+        760px;
+
+    margin:
+        0 auto;
+
+    min-height:
+        100vh;
+
+    min-height:
+        100dvh;
+
+    padding:
+        0
+        14px
+        calc(
+            var(--nav-height)
+            +
+            var(--safe-bottom)
+            +
+            24px
+        );
+}
+
+
+/* =========================================================
+   3. 画面
+========================================================= */
+
+.screen {
+
+    display:
+        none;
+
+    width:
+        100%;
+
+    padding-top:
+        max(
+            18px,
+            env(
+                safe-area-inset-top,
+                0px
+            )
+        );
+
+    animation:
+        screenFade
+        0.18s
+        ease;
+}
+
+.screen.active {
+
+    display:
+        block;
+}
+
+@keyframes screenFade {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateY(
+                4px
+            );
+    }
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(
+                0
+            );
+    }
+}
+
+
+/* =========================================================
+   4. タイトル
+========================================================= */
+
+.page-title {
+
+    margin:
+        2px
+        0
+        20px;
+
+    font-size:
+        clamp(
+            27px,
+            7vw,
+            36px
+        );
+
+    line-height:
+        1.12;
+
+    letter-spacing:
+        -0.04em;
+
+    font-weight:
+        800;
+
+    color:
+        var(--text);
+}
+
+
+/* =========================================================
+   5. 共通カード
+========================================================= */
+
+.weather-main-card,
+.map-card,
+.country-search-box,
+.city-search-box {
+
+    width:
+        100%;
+
+    margin:
+        0
+        0
+        16px;
+
+    padding:
+        16px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(
+                255,
+                255,
+                255,
+                0.035
+            ),
+            rgba(
+                255,
+                255,
+                255,
+                0.012
+            )
+        ),
+        var(--card);
+
+    box-shadow:
+        var(--shadow);
+}
+
+.large-info {
+
+    width:
+        100%;
+
+    margin:
+        4px
+        0
+        14px;
+
+    padding:
+        14px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        14px;
+
+    background:
+        var(--card-2);
+
+    color:
+        var(--text);
+
+    font-size:
+        17px;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   6. セクション見出し
+========================================================= */
+
+.section-heading {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    margin:
+        26px
+        2px
+        12px;
+}
+
+.weather-main-card
+.section-heading {
+
+    margin-top:
+        0;
+}
+
+.section-heading h2 {
+
+    margin:
+        0;
+
+    font-size:
+        19px;
+
+    line-height:
+        1.25;
+
+    font-weight:
+        750;
+
+    letter-spacing:
+        -0.02em;
+}
+
+.section-heading > span {
+
+    flex:
+        0 0 auto;
+
+    padding:
+        5px
+        9px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        999px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.035
+        );
+
+    color:
+        var(--muted);
+
+    font-size:
+        10px;
+
+    line-height:
+        1;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.08em;
+}
+
+
+/* =========================================================
+   7. 国検索
+========================================================= */
+
+.country-search-box {
+
+    position:
+        relative;
+
+    margin-bottom:
+        12px;
+
+    box-shadow:
+        none;
+}
+
+.country-search-box label,
+.city-search-box label,
+.route-form label,
+#conquest-screen label {
+
+    display:
+        block;
+
+    margin:
+        0
+        0
+        8px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+
+    font-weight:
+        600;
+}
+
+.country-search,
+#city-search,
+#route-origin,
+#route-destination,
+#route-departure,
+#route-mode,
+#game-player-name-input {
+
+    width:
+        100%;
+
+    min-height:
+        47px;
+
+    padding:
+        12px
+        14px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        14px;
+
+    background:
+        #0b1724;
+
+    color:
+        var(--text);
+
+    font-size:
+        15px;
+
+    transition:
+        border-color
+        0.15s
+        ease,
+        box-shadow
+        0.15s
+        ease,
+        background
+        0.15s
+        ease;
+}
+
+.country-search::placeholder,
+#city-search::placeholder,
+#route-origin::placeholder,
+#route-destination::placeholder,
+#game-player-name-input::placeholder {
+
+    color:
+        #627487;
+}
+
+.country-search:focus,
+#city-search:focus,
+#route-origin:focus,
+#route-destination:focus,
+#route-departure:focus,
+#route-mode:focus,
+#game-player-name-input:focus {
+
+    border-color:
+        rgba(
+            93,
+            168,
+            255,
+            0.75
+        );
+
+    background:
+        #0d1b29;
+
+    box-shadow:
+        0
+        0
+        0
+        3px
+        rgba(
+            93,
+            168,
+            255,
+            0.10
+        );
+}
+
+
+/* =========================================================
+   8. 検索結果
+========================================================= */
+
+.search-results {
+
+    position:
+        relative;
+
+    z-index:
+        1000;
+
+    width:
+        100%;
+
+    max-height:
+        300px;
+
+    overflow-y:
+        auto;
+
+    margin-top:
+        8px;
+
+    border:
+        1px solid var(--border-strong);
+
+    border-radius:
+        14px;
+
+    background:
+        #0b1724;
+
+    box-shadow:
+        0
+        18px
+        40px
+        rgba(
+            0,
+            0,
+            0,
+            0.45
+        );
+}
+
+.search-results button {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        flex-start;
+
+    width:
+        100%;
+
+    gap:
+        3px;
+
+    padding:
+        13px
+        14px;
+
+    border:
+        0;
+
+    border-bottom:
+        1px solid var(--border);
+
+    background:
+        transparent;
+
+    color:
+        var(--text);
+
+    text-align:
+        left;
+
+    cursor:
+        pointer;
+}
+
+.search-results button:last-child {
+
+    border-bottom:
+        0;
+}
+
+.search-results button:hover,
+.search-results button:active {
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.045
+        );
+}
+
+.search-results strong {
+
+    font-size:
+        14px;
+}
+
+.search-results small {
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+}
+
+.search-results p {
+
+    margin:
+        0;
+
+    padding:
+        13px
+        14px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+}
+
+.search-hint {
+
+    margin:
+        8px
+        0
+        0;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+}
+
+
+/* =========================================================
+   9. 国カードスクロール
+========================================================= */
+
+.country-scroll {
+
+    display:
+        flex;
+
+    gap:
+        10px;
+
+    width:
+        calc(
+            100%
+            +
+            28px
+        );
+
+    margin:
+        0
+        -14px
+        18px;
+
+    padding:
+        0
+        14px
+        4px;
+
+    overflow-x:
+        auto;
+
+    scrollbar-width:
+        none;
+
+    -webkit-overflow-scrolling:
+        touch;
+}
+
+.country-scroll::-webkit-scrollbar {
+
+    display:
+        none;
+}
+
+.country-card {
+
+    flex:
+        0 0 auto;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    min-height:
+        44px;
+
+    padding:
+        8px
+        13px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        999px;
+
+    background:
+        var(--card);
+
+    color:
+        var(--muted);
+
+    white-space:
+        nowrap;
+
+    cursor:
+        pointer;
+
+    transition:
+        0.15s
+        ease;
+}
+
+.country-card.active {
+
+    border-color:
+        rgba(
+            93,
+            168,
+            255,
+            0.55
+        );
+
+    background:
+        var(--blue-bg);
+
+    color:
+        var(--text);
+}
+
+.country-card:active {
+
+    transform:
+        scale(
+            0.97
+        );
+}
+
+.country-flag {
+
+    font-size:
+        19px;
+}
+
+.country-name {
+
+    font-size:
+        13px;
+
+    font-weight:
+        650;
+}
+
+
+/* =========================================================
+   10. 為替メイン
+========================================================= */
+
+.rate-section {
+
+    padding:
+        8px
+        2px
+        16px;
+}
+
+.rate-label {
+
+    margin-bottom:
+        4px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        14px;
+}
+
+.rate-main {
+
+    display:
+        flex;
+
+    align-items:
+        baseline;
+
+    gap:
+        6px;
+
+    margin:
+        4px
+        0;
+}
+
+#rate-number {
+
+    color:
+        var(--text);
+
+    font-size:
+        clamp(
+            44px,
+            13vw,
+            68px
+        );
+
+    line-height:
+        1;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        -0.05em;
+}
+
+.rate-main .yen {
+
+    color:
+        var(--muted);
+
+    font-size:
+        18px;
+
+    font-weight:
+        700;
+}
+
+.rate-date {
+
+    margin-top:
+        8px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+}
+
+
+/* =========================================================
+   11. 情報ソース
+========================================================= */
+
+.source-note {
+
+    margin:
+        10px
+        2px
+        16px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+    line-height:
+        1.65;
+}
+
+.source-note a {
+
+    color:
+        var(--blue);
+
+    text-decoration:
+        none;
+}
+
+.source-note a:hover {
+
+    text-decoration:
+        underline;
+}
+
+
+/* =========================================================
+   12. 為替期間
+========================================================= */
+
+.period-row {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            6,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        6px;
+
+    margin:
+        14px
+        0
+        12px;
+}
+
+.period-row button {
+
+    min-width:
+        0;
+
+    padding:
+        9px
+        3px;
+
+    border:
+        1px solid transparent;
+
+    border-radius:
+        9px;
+
+    background:
+        transparent;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+    cursor:
+        pointer;
+}
+
+.period-row button.active {
+
+    border-color:
+        var(--border);
+
+    background:
+        var(--card-2);
+
+    color:
+        var(--text);
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   13. 為替チャート
+========================================================= */
+
+.chart-header {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    margin:
+        16px
+        2px
+        8px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+}
+
+.chart-header strong {
+
+    color:
+        var(--green);
+
+    font-size:
+        14px;
+}
+
+.chart-wrap {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+    height:
+        min(
+            48vh,
+            400px
+        );
+
+    min-height:
+        280px;
+
+    margin:
+        0
+        0
+        18px;
+
+    padding:
+        10px
+        4px
+        4px;
+
+    border-top:
+        1px solid var(--border);
+
+    border-bottom:
+        1px solid var(--border);
+}
+
+#currency-chart {
+
+    width:
+        100%
+        !important;
+
+    height:
+        100%
+        !important;
+}
+
+
+/* =========================================================
+   14. 為替換算
+========================================================= */
+
+.converter {
+
+    margin:
+        18px
+        0;
+
+    padding:
+        17px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    background:
+        var(--card);
+}
+
+.converter-label {
+
+    margin-bottom:
+        12px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+    font-weight:
+        650;
+}
+
+.converter-input-row {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+}
+
+#converter-input {
+
+    flex:
+        1 1 auto;
+
+    width:
+        100%;
+
+    min-width:
+        0;
+
+    padding:
+        13px
+        14px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        13px;
+
+    background:
+        var(--bg-soft);
+
+    color:
+        var(--text);
+
+    font-size:
+        21px;
+
+    font-weight:
+        700;
+}
+#converter-currency {
+
+    flex:
+        0 0 auto;
+
+    color:
+        var(--muted);
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+}
+
+.converter-arrow {
+
+    padding:
+        8px
+        0;
+
+    color:
+        var(--muted);
+
+    text-align:
+        center;
+}
+
+.converter-answer {
+
+    display:
+        flex;
+
+    align-items:
+        baseline;
+
+    gap:
+        7px;
+}
+
+.converter-answer strong {
+
+    color:
+        var(--green);
+
+    font-size:
+        30px;
+
+    line-height:
+        1.15;
+
+    font-weight:
+        800;
+}
+
+.converter-answer span {
+
+    color:
+        var(--muted);
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   15. 国表示
+========================================================= */
+
+.screen-country {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+    margin:
+        0
+        0
+        18px;
+
+    padding:
+        14px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    background:
+        var(--card);
+}
+
+.screen-country > span {
+
+    flex:
+        0 0 auto;
+
+    font-size:
+        32px;
+
+    line-height:
+        1;
+}
+
+.screen-country-name {
+
+    color:
+        var(--text);
+
+    font-size:
+        18px;
+
+    line-height:
+        1.25;
+
+    font-weight:
+        750;
+}
+
+.screen-country-sub {
+
+    margin-top:
+        3px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+}
+
+
+/* =========================================================
+   16. ステータス
+========================================================= */
+
+.data-status {
+
+    min-height:
+        20px;
+
+    margin:
+        10px
+        2px
+        14px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+    line-height:
+        1.55;
+}
+
+.data-status:empty {
+
+    display:
+        none;
+}
+
+
+/* =========================================================
+   17. ニュース
+========================================================= */
+
+.news-list {
+
+    display:
+        grid;
+
+    gap:
+        12px;
+}
+
+.news-item {
+
+    display:
+        block;
+
+    width:
+        100%;
+
+    padding:
+        15px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    background:
+        var(--card);
+
+    color:
+        var(--text);
+
+    text-decoration:
+        none;
+
+    overflow:
+        hidden;
+}
+
+.news-item:hover {
+
+    border-color:
+        var(--border-strong);
+
+    opacity:
+        1;
+}
+
+.news-item h3 {
+
+    margin:
+        0
+        0
+        8px;
+
+    color:
+        var(--text);
+
+    font-size:
+        15px;
+
+    line-height:
+        1.45;
+
+    font-weight:
+        700;
+}
+
+.news-item p {
+
+    margin:
+        0;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+    line-height:
+        1.6;
+}
+
+.news-meta {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        6px
+        10px;
+
+    margin-top:
+        10px;
+
+    color:
+        var(--muted-2);
+
+    font-size:
+        11px;
+}
+
+.loading {
+
+    padding:
+        18px;
+
+    color:
+        var(--muted);
+
+    text-align:
+        center;
+}
+
+
+/* =========================================================
+   18. 地図カード
+========================================================= */
+
+.map-card {
+
+    overflow:
+        hidden;
+}
+
+.map-title-row {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    margin-bottom:
+        12px;
+
+    font-weight:
+        700;
+}
+
+.live-badge {
+
+    flex:
+        0 0 auto;
+
+    padding:
+        5px
+        8px;
+
+    border:
+        1px solid
+        rgba(
+            105,
+            217,
+            157,
+            0.35
+        );
+
+    border-radius:
+        999px;
+
+    background:
+        var(--green-bg);
+
+    color:
+        var(--green);
+
+    font-size:
+        10px;
+
+    line-height:
+        1;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        0.06em;
+}
+
+#danger-map,
+#radar-map {
+
+    width:
+        100%;
+
+    height:
+        390px;
+
+    border-radius:
+        14px;
+
+    overflow:
+        hidden;
+
+    background:
+        var(--bg-soft);
+}
+
+#history-map,
+#conquest-map {
+
+    width:
+        100%;
+
+    border-radius:
+        14px;
+
+    overflow:
+        hidden;
+
+    background:
+        var(--bg-soft);
+}
+
+
+/* =========================================================
+   19. 危険度
+========================================================= */
+
+.danger-scale {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    margin-top:
+        12px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        10px;
+
+    font-weight:
+        700;
+}
+
+.danger-gradient {
+
+    flex:
+        1 1 auto;
+
+    height:
+        7px;
+
+    border-radius:
+        999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--green),
+            var(--yellow),
+            var(--orange),
+            var(--red)
+        );
+}
+
+
+/* =========================================================
+   20. 経路フォーム
+========================================================= */
+
+.route-form {
+
+    display:
+        grid;
+
+    gap:
+        14px;
+
+    margin:
+        0
+        0
+        14px;
+}
+
+.route-form > div {
+
+    position:
+        relative;
+}
+
+.route-button {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    width:
+        100%;
+
+    min-height:
+        48px;
+
+    margin:
+        10px
+        0
+        0;
+
+    padding:
+        12px
+        15px;
+
+    border:
+        1px solid
+        rgba(
+            93,
+            168,
+            255,
+            0.30
+        );
+
+    border-radius:
+        14px;
+
+    background:
+        var(--blue-bg);
+
+    color:
+        var(--text);
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+
+    text-align:
+        center;
+
+    text-decoration:
+        none;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform
+        0.12s
+        ease,
+        background
+        0.12s
+        ease,
+        border-color
+        0.12s
+        ease;
+}
+
+.route-button:hover {
+
+    border-color:
+        rgba(
+            93,
+            168,
+            255,
+            0.55
+        );
+
+    background:
+        rgba(
+            72,
+            145,
+            230,
+            0.22
+        );
+
+    opacity:
+        1;
+}
+
+.route-button:active {
+
+    transform:
+        scale(
+            0.985
+        );
+}
+
+.route-button:disabled {
+
+    opacity:
+        0.45;
+
+    cursor:
+        not-allowed;
+}
+
+
+/* =========================================================
+   21. 経路結果
+========================================================= */
+
+.route-summary {
+
+    display:
+        grid;
+
+    gap:
+        10px;
+
+    margin:
+        14px
+        0;
+}
+
+.route-summary > div {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        16px;
+
+    padding:
+        13px
+        14px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        13px;
+
+    background:
+        var(--card-2);
+}
+
+.route-summary dt {
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+}
+
+.route-summary dd {
+
+    margin:
+        0;
+
+    color:
+        var(--text);
+
+    font-size:
+        13px;
+
+    font-weight:
+        700;
+
+    text-align:
+        right;
+}
+
+
+/* =========================================================
+   22. 天気・現在
+========================================================= */
+
+.current-weather {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        18px;
+
+    margin:
+        16px
+        0;
+
+    padding:
+        18px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    background:
+        var(--card);
+}
+
+.weather-now-label {
+
+    margin-bottom:
+        4px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+}
+
+.weather-temperature-row {
+
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    gap:
+        2px;
+}
+
+.weather-temperature-row strong {
+
+    font-size:
+        clamp(
+            45px,
+            13vw,
+            66px
+        );
+
+    line-height:
+        1;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        -0.05em;
+}
+
+.weather-temperature-row span {
+
+    color:
+        var(--muted);
+
+    font-size:
+        23px;
+
+    font-weight:
+        700;
+}
+
+.weather-description {
+
+    margin-top:
+        8px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        13px;
+}
+
+.weather-main-icon {
+
+    flex:
+        0 0 auto;
+
+    font-size:
+        clamp(
+            56px,
+            17vw,
+            82px
+        );
+
+    line-height:
+        1;
+}
+
+
+/* =========================================================
+   23. 天気ステータス
+========================================================= */
+
+.weather-stats {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        9px;
+
+    margin:
+        14px
+        0;
+}
+
+.weather-stats > div {
+
+    min-width:
+        0;
+
+    padding:
+        13px
+        10px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        14px;
+
+    background:
+        var(--card-2);
+
+    text-align:
+        center;
+}
+
+.weather-stats span {
+
+    display:
+        block;
+
+    margin-bottom:
+        5px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        10px;
+}
+
+.weather-stats strong {
+
+    display:
+        block;
+
+    overflow:
+        hidden;
+
+    color:
+        var(--text);
+
+    font-size:
+        15px;
+
+    line-height:
+        1.25;
+
+    font-weight:
+        750;
+
+    text-overflow:
+        ellipsis;
+}
+
+
+/* =========================================================
+   24. アドバイス
+========================================================= */
+
+.advice-box {
+
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    gap:
+        13px;
+
+    margin:
+        16px
+        0;
+
+    padding:
+        15px;
+
+    border:
+        1px solid
+        rgba(
+            93,
+            168,
+            255,
+            0.20
+        );
+
+    border-radius:
+        var(--radius);
+
+    background:
+        var(--blue-bg);
+}
+
+.advice-icon {
+
+    flex:
+        0 0 auto;
+
+    font-size:
+        30px;
+
+    line-height:
+        1;
+}
+
+.advice-box strong {
+
+    display:
+        block;
+
+    margin-bottom:
+        4px;
+
+    color:
+        var(--text);
+
+    font-size:
+        14px;
+}
+
+.advice-box p {
+
+    margin:
+        0;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+    line-height:
+        1.6;
+}
+
+
+/* =========================================================
+   25. 時間別予報
+========================================================= */
+
+.hourly-forecast {
+
+    display:
+        flex;
+
+    gap:
+        10px;
+
+    width:
+        calc(
+            100%
+            +
+            28px
+        );
+
+    margin:
+        0
+        -14px;
+
+    padding:
+        0
+        14px
+        6px;
+
+    overflow-x:
+        auto;
+
+    scrollbar-width:
+        none;
+
+    -webkit-overflow-scrolling:
+        touch;
+}
+
+.hourly-forecast::-webkit-scrollbar {
+
+    display:
+        none;
+}
+
+.hourly-item {
+
+    flex:
+        0 0 82px;
+
+    padding:
+        12px
+        8px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        14px;
+
+    background:
+        var(--card);
+
+    text-align:
+        center;
+}
+
+.hourly-item .time {
+
+    color:
+        var(--muted);
+
+    font-size:
+        11px;
+}
+
+.hourly-item .icon {
+
+    margin:
+        7px
+        0;
+
+    font-size:
+        25px;
+
+    line-height:
+        1;
+}
+
+.hourly-item .temp {
+
+    color:
+        var(--text);
+
+    font-size:
+        14px;
+
+    font-weight:
+        750;
+}
+
+.hourly-item .rain {
+
+    margin-top:
+        4px;
+
+    color:
+        var(--blue);
+
+    font-size:
+        10px;
+}
+
+
+/* =========================================================
+   26. 週間予報
+========================================================= */
+
+.weekly-forecast {
+
+    display:
+        grid;
+
+    gap:
+        8px;
+}
+
+.weekly-item {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(
+            70px,
+            1fr
+        )
+        40px
+        1fr
+        1fr;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    padding:
+        12px
+        13px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        14px;
+
+    background:
+        var(--card);
+}
+
+.weekly-item .day {
+
+    color:
+        var(--text);
+
+    font-size:
+        12px;
+
+    font-weight:
+        700;
+}
+
+.weekly-item .icon {
+
+    text-align:
+        center;
+
+    font-size:
+        22px;
+}
+
+.weekly-item .temp {
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+    text-align:
+        right;
+}
+
+.weekly-item .rain {
+
+    color:
+        var(--blue);
+
+    font-size:
+        11px;
+
+    text-align:
+        right;
+}
+
+
+/* =========================================================
+   27. レーダー
+========================================================= */
+
+.radar-card {
+
+    overflow:
+        hidden;
+
+    margin:
+        0
+        0
+        16px;
+
+    padding:
+        14px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    background:
+        var(--card);
+}
+
+.radar-bottom {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        auto
+        minmax(
+            0,
+            1fr
+        )
+        auto;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    margin-top:
+        12px;
+}
+
+#radar-time {
+
+    color:
+        var(--muted);
+
+    font-size:
+        11px;
+
+    white-space:
+        nowrap;
+}
+
+#radar-slider {
+
+    width:
+        100%;
+}
+
+#radar-play {
+
+    min-height:
+        38px;
+
+    padding:
+        7px
+        11px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        11px;
+
+    background:
+        var(--card-2);
+
+    color:
+        var(--text);
+
+    font-size:
+        11px;
+
+    font-weight:
+        700;
+
+    cursor:
+        pointer;
+}
+
+.radar-credit {
+
+    margin-top:
+        10px;
+
+    color:
+        var(--muted-2);
+
+    font-size:
+        10px;
+
+    text-align:
+        right;
+}
+
+.radar-credit a {
+
+    color:
+        var(--muted);
+
+    text-decoration:
+        none;
+}
+
+
+/* =========================================================
+   28. 緊急情報
+========================================================= */
+
+.emergency-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap:
+        10px;
+
+    margin:
+        0
+        0
+        16px;
+}
+
+.emergency-item {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        center;
+
+    min-height:
+        78px;
+
+    padding:
+        13px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        14px;
+
+    background:
+        var(--card);
+
+    color:
+        var(--text);
+
+    text-decoration:
+        none;
+}
+
+a.emergency-item {
+
+    cursor:
+        pointer;
+}
+
+a.emergency-item:hover {
+
+    border-color:
+        var(--border-strong);
+
+    opacity:
+        1;
+}
+
+.emergency-item span {
+
+    margin-bottom:
+        4px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        11px;
+}
+
+.emergency-item strong {
+
+    color:
+        var(--text);
+
+    font-size:
+        19px;
+
+    line-height:
+        1.2;
+}
+
+
+/* =========================================================
+   29. Leaflet
+========================================================= */
+
+.leaflet-container {
+
+    background:
+        #0a1521;
+
+    font-family:
+        inherit;
+}
+
+.leaflet-control-zoom a {
+
+    background:
+        var(--card-2);
+
+    color:
+        var(--text);
+
+    border-color:
+        var(--border)
+        !important;
+}
+
+.leaflet-control-zoom a:hover {
+
+    background:
+        var(--card-3);
+
+    color:
+        var(--text);
+}
+
+.leaflet-control-attribution {
+
+    background:
+        rgba(
+            7,
+            17,
+            29,
+            0.82
+        )
+        !important;
+
+    color:
+        var(--muted)
+        !important;
+
+    font-size:
+        9px;
+}
+
+.leaflet-control-attribution a {
+
+    color:
+        var(--blue)
+        !important;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+
+    background:
+        var(--card-2);
+
+    color:
+        var(--text);
+}
+
+.leaflet-popup-content {
+
+    margin:
+        12px
+        14px;
+
+    font-family:
+        inherit;
+
+    line-height:
+        1.5;
+}
+/* =========================================================
+   28. 移動履歴
+========================================================= */
+
+#history-screen
+.weather-main-card {
+
+    margin-bottom:
+        18px;
+}
+
+#trip-state {
+
+    color:
+        var(--green);
+}
+
+#trip-distance {
+
+    font-variant-numeric:
+        tabular-nums;
+}
+
+#trip-history
+.news-card {
+
+    padding-right:
+        42px;
+}
+
+
+/* =========================================================
+   29. 征服画面
+========================================================= */
+
+#conquest-screen {
+
+    padding-bottom:
+        30px;
+}
+
+#conquest-screen
+.weather-main-card {
+
+    margin-bottom:
+        16px;
+}
+
+#conquest-screen
+.weather-stats {
+
+    margin-top:
+        0;
+}
+
+#conquest-coins {
+
+    color:
+        var(--yellow);
+}
+
+#conquest-daily-income {
+
+    color:
+        var(--green);
+}
+
+#conquest-land-count {
+
+    color:
+        var(--blue);
+}
+
+
+/* =========================================================
+   30. 征服プロフィール
+========================================================= */
+
+#game-player-name-input {
+
+    margin-bottom:
+        4px;
+}
+
+#game-player-name-save {
+
+    margin-top:
+        10px;
+}
+
+
+/* =========================================================
+   31. 土地詳細
+========================================================= */
+
+#land-panel {
+
+    margin-top:
+        18px;
+
+    border-color:
+        rgba(
+            93,
+            168,
+            255,
+            0.22
+        );
+}
+
+#land-name {
+
+    margin-top:
+        8px;
+
+    color:
+        var(--text);
+
+    font-size:
+        18px;
+}
+
+#land-price,
+#land-cost {
+
+    color:
+        var(--yellow);
+}
+
+#land-income {
+
+    color:
+        var(--green);
+}
+
+#land-owner {
+
+    color:
+        var(--blue);
+}
+
+#land-buy {
+
+    margin-top:
+        14px;
+}
+
+#land-close {
+
+    border-color:
+        var(--border);
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.04
+        );
+
+    color:
+        var(--muted);
+}
+
+
+/* =========================================================
+   32. 征服凡例
+========================================================= */
+
+#conquest-legend
+.weather-stats {
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+}
+
+#conquest-legend
+.weather-stats
+> div {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+}
+
+#conquest-legend
+.weather-stats
+span {
+
+    margin:
+        0;
+
+    font-size:
+        19px;
+}
+
+#conquest-legend
+.weather-stats
+strong {
+
+    font-size:
+        12px;
+}
+
+
+/* =========================================================
+   33. 買収
+========================================================= */
+
+.buyout-card {
+
+    padding-right:
+        15px;
+}
+
+.buyout-detail,
+.ranking-detail {
+
+    margin-top:
+        5px;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+    line-height:
+        1.45;
+}
+
+.buyout-card
+.route-button {
+
+    margin-top:
+        12px;
+
+    min-height:
+        42px;
+
+    font-size:
+        12px;
+}
+
+
+/* =========================================================
+   34. ランキング
+========================================================= */
+
+.ranking-card {
+
+    padding-right:
+        15px;
+}
+
+.ranking-card.mine {
+
+    border-color:
+        rgba(
+            93,
+            168,
+            255,
+            0.55
+        );
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(
+                93,
+                168,
+                255,
+                0.13
+            ),
+            var(--card)
+        );
+}
+
+.ranking-card.mine
+.news-source {
+
+    color:
+        var(--blue);
+}
+
+
+/* =========================================================
+   35. ボトムナビ
+========================================================= */
+
+.bottom-nav {
+
+    position:
+        fixed;
+
+    z-index:
+        5000;
+
+    left:
+        50%;
+
+    bottom:
+        0;
+
+    transform:
+        translateX(
+            -50%
+        );
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            7,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    width:
+        min(
+            100%,
+            760px
+        );
+
+    min-height:
+        calc(
+            var(--nav-height)
+            +
+            var(--safe-bottom)
+        );
+
+    padding:
+        7px
+        5px
+        calc(
+            7px
+            +
+            var(--safe-bottom)
+        );
+
+    border-top:
+        1px solid var(--border);
+
+    background:
+        rgba(
+            7,
+            17,
+            29,
+            0.93
+        );
+
+    backdrop-filter:
+        blur(
+            18px
+        );
+
+    -webkit-backdrop-filter:
+        blur(
+            18px
+        );
+
+    box-shadow:
+        0
+        -12px
+        30px
+        rgba(
+            0,
+            0,
+            0,
+            0.35
+        );
+}
+
+.nav-button {
+
+    position:
+        relative;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        2px;
+
+    min-width:
+        0;
+
+    min-height:
+        58px;
+
+    padding:
+        5px
+        1px;
+
+    border:
+        0;
+
+    border-radius:
+        12px;
+
+    background:
+        transparent;
+
+    color:
+        #75899c;
+
+    font-size:
+        9px;
+
+    line-height:
+        1;
+
+    cursor:
+        pointer;
+
+    transition:
+        background
+        0.15s
+        ease,
+        color
+        0.15s
+        ease,
+        transform
+        0.12s
+        ease;
+}
+
+.nav-button > span {
+
+    display:
+        block;
+
+    font-size:
+        20px;
+
+    line-height:
+        1.2;
+}
+
+.nav-button.active {
+
+    background:
+        rgba(
+            93,
+            168,
+            255,
+            0.10
+        );
+
+    color:
+        #e5f1ff;
+}
+
+.nav-button.active::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    top:
+        2px;
+
+    left:
+        50%;
+
+    width:
+        18px;
+
+    height:
+        2px;
+
+    transform:
+        translateX(
+            -50%
+        );
+
+    border-radius:
+        999px;
+
+    background:
+        var(--blue);
+}
+
+.nav-button:active {
+
+    transform:
+        scale(
+            0.94
+        );
+}
+
+
+/* =========================================================
+   36. スクロールバー
+========================================================= */
+
+* {
+
+    scrollbar-width:
+        thin;
+
+    scrollbar-color:
+        #314154
+        transparent;
+}
+
+*::-webkit-scrollbar {
+
+    width:
+        6px;
+
+    height:
+        6px;
+}
+
+*::-webkit-scrollbar-track {
+
+    background:
+        transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+
+    border-radius:
+        999px;
+
+    background:
+        #314154;
+}
+
+
+/* =========================================================
+   37. 選択
+========================================================= */
+
+::selection {
+
+    background:
+        rgba(
+            93,
+            168,
+            255,
+            0.30
+        );
+
+    color:
+        white;
+}
+
+
+/* =========================================================
+   38. フォーカス
+========================================================= */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+
+    outline:
+        2px solid var(--blue);
+
+    outline-offset:
+        3px;
+}
+
+
+/* =========================================================
+   39. 小さいスマホ
+========================================================= */
+
+@media (
+    max-width:
+        430px
+) {
+
+    .app {
+
+        padding-left:
+            12px;
+
+        padding-right:
+            12px;
+    }
+
+    .page-title {
+
+        margin-bottom:
+            16px;
+    }
+
+    .weather-main-card,
+    .map-card,
+    .country-search-box,
+    .city-search-box {
+
+        border-radius:
+            16px;
+    }
+
+    .weather-current {
+
+        gap:
+            10px;
+    }
+
+    .weather-temperature
+    strong {
+
+        font-size:
+            44px;
+    }
+
+    .weather-icon {
+
+        width:
+            68px;
+
+        height:
+            68px;
+
+        border-radius:
+            18px;
+
+        font-size:
+            39px;
+    }
+
+    .weekly-row {
+
+        grid-template-columns:
+            minmax(
+                80px,
+                1fr
+            )
+            35px
+            auto
+            40px;
+
+        padding:
+            12px
+            11px;
+
+        gap:
+            5px;
+    }
+
+    .weekly-date {
+
+        font-size:
+            12px;
+    }
+
+    .weekly-temp {
+
+        font-size:
+            11px;
+    }
+
+    #danger-map,
+    #radar-map,
+    #history-map {
+
+        min-height:
+            300px;
+    }
+
+    #conquest-map {
+
+        min-height:
+            340px;
+    }
+
+    .nav-button {
+
+        font-size:
+            8px;
+    }
+
+    .nav-button > span {
+
+        font-size:
+            19px;
+    }
+
+    .bottom-nav {
+
+        padding-left:
+            3px;
+
+        padding-right:
+            3px;
+    }
+}
+
+
+/* =========================================================
+   40. かなり小さい画面
+========================================================= */
+
+@media (
+    max-width:
+        365px
+) {
+
+    .weather-stats {
+
+        gap:
+            7px;
+    }
+
+    .weather-stats
+    > div {
+
+        padding:
+            11px;
+    }
+
+    .nav-button {
+
+        font-size:
+            7px;
+    }
+
+    .nav-button > span {
+
+        font-size:
+            18px;
+    }
+
+    .period-row {
+
+        gap:
+            2px;
+    }
+
+    .period-row
+    button {
+
+        font-size:
+            10px;
+
+        padding:
+            8px
+            1px;
+    }
+
+    .weekly-row {
+
+        grid-template-columns:
+            1fr
+            31px
+            auto;
+    }
+
+    .weekly-rain {
+
+        display:
+            none;
+    }
+}
+
+
+/* =========================================================
+   41. タブレット
+========================================================= */
+
+@media (
+    min-width:
+        700px
+) {
+
+    .app {
+
+        padding-left:
+            24px;
+
+        padding-right:
+            24px;
+    }
+
+    .page-title {
+
+        margin-top:
+            10px;
+    }
+
+    .weather-stats {
+
+        grid-template-columns:
+            repeat(
+                4,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+    }
+
+    #conquest-legend
+    .weather-stats {
+
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+    }
+
+    .chart-wrap {
+
+        min-height:
+            360px;
+    }
+
+    .converter {
+
+        max-width:
+            520px;
+    }
+}
+
+
+/* =========================================================
+   42. 横画面
+========================================================= */
+
+@media (
+    orientation:
+        landscape
+)
+and
+(
+    max-height:
+        560px
+) {
+
+    :root {
+
+        --nav-height:
+            64px;
+    }
+
+    .bottom-nav {
+
+        min-height:
+            calc(
+                64px
+                +
+                var(--safe-bottom)
+            );
+    }
+
+    .nav-button {
+
+        min-height:
+            48px;
+    }
+
+    .nav-button > span {
+
+        font-size:
+            16px;
+    }
+
+    .chart-wrap {
+
+        min-height:
+            240px;
+
+        height:
+            70vh;
+    }
+
+    #danger-map,
+    #radar-map,
+    #history-map,
+    #conquest-map {
+
+        height:
+            72vh;
+
+        min-height:
+            260px;
+    }
+}
+
+
+/* =========================================================
+   43. reduced motion
+========================================================= */
+
+@media (
+    prefers-reduced-motion:
+        reduce
+) {
+
+    * {
+
+        scroll-behavior:
+            auto
+            !important;
+
+        animation-duration:
+            0.001ms
+            !important;
+
+        transition-duration:
+            0.001ms
+            !important;
+    }
+}
+
+
+/* =========================================================
+   44. iPhone Safe Area
+========================================================= */
+
+@supports (
+    padding:
+        max(
+            0px
+        )
+) {
+
+    .app {
+
+        padding-left:
+            max(
+                14px,
+                env(
+                    safe-area-inset-left
+                )
+            );
+
+        padding-right:
+            max(
+                14px,
+                env(
+                    safe-area-inset-right
+                )
+            );
+    }
+
+    .bottom-nav {
+
+        padding-left:
+            max(
+                5px,
+                env(
+                    safe-area-inset-left
+                )
+            );
+
+        padding-right:
+            max(
+                5px,
+                env(
+                    safe-area-inset-right
+                )
+            );
+    }
+}
+
+
+/* =========================================================
+   45. 征服：土地状態
+========================================================= */
+
+#land-buyout-state {
+
+    margin-top:
+        14px;
+
+    padding:
+        11px
+        12px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        12px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.025
+        );
+}
+
+#land-action-status {
+
+    margin-top:
+        10px;
+}
+
+
+/* =========================================================
+   46. 征服：通知
+========================================================= */
+
+#game-notifications
+.news-card {
+
+    padding-right:
+        15px;
+}
+
+#notifications-read {
+
+    border-color:
+        var(--border);
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.035
+        );
+
+    color:
+        var(--muted);
+}
+
+
+/* =========================================================
+   47. 征服：ランク
+========================================================= */
+
+#rank-shop {
+
+    border-color:
+        rgba(
+            255,
+            215,
+            102,
+            0.17
+        );
+}
+
+#rank-shop
+.large-info {
+
+    margin-bottom:
+        0;
+
+    color:
+        var(--yellow);
+}
+
+#my-land-color {
+
+    border-color:
+        rgba(
+            93,
+            168,
+            255,
+            0.22
+        );
+}
+
+#my-land-color
+.large-info {
+
+    margin-bottom:
+        8px;
+
+    color:
+        var(--blue);
+}
+
+
+/* =========================================================
+   48. 地図ポリゴン選択感
+========================================================= */
+
+#conquest-map
+.leaflet-interactive {
+
+    transition:
+        fill-opacity
+        0.12s
+        ease,
+        stroke-width
+        0.12s
+        ease;
+}
+
+#conquest-map
+.leaflet-interactive:hover {
+
+    fill-opacity:
+        0.62
+        !important;
+
+    stroke-width:
+        3px
+        !important;
+}
+
+
+/* =========================================================
+   49. 数字
+========================================================= */
+
+#rate-number,
+#converter-result,
+#conquest-coins,
+#conquest-land-count,
+#conquest-daily-income,
+#land-price,
+#land-cost,
+#land-income,
+#trip-distance {
+
+    font-variant-numeric:
+        tabular-nums;
+}
+
+
+/* =========================================================
+   50. 最後の微調整
+========================================================= */
+
+button {
+
+    -webkit-user-select:
+        none;
+
+    user-select:
+        none;
+}
+
+input {
+
+    -webkit-user-select:
+        text;
+
+    user-select:
+        text;
+}
+
+#route-google-link {
+
+    margin-top:
+        16px;
+}
+
+#route-current-location {
+
+    margin-top:
+        8px;
+
+    min-height:
+        42px;
+
+    font-size:
+        12px;
+}
+
+#conquest-locate {
+
+    margin-top:
+        12px;
+}
+
+#conquest-refresh {
+
+    margin-top:
+        8px;
+
+    border-color:
+        var(--border);
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.035
+        );
+
+    color:
+        var(--muted);
+}
+
+
+/* =========================================================
+   WORLD LAND MAP
+========================================================= */
+
+#conquest-map .maplibregl-map,
+#conquest-map .maplibregl-canvas-container,
+#conquest-map .maplibregl-canvas {
+
+    background:
+        transparent !important;
+
+    pointer-events:
+        none !important;
+}
+
+#conquest-map {
+
+    cursor:
+        pointer;
+}
+
+
+/* =========================================================
+   END
+========================================================= */
